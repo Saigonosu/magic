@@ -1,6 +1,6 @@
 cardlist = Hash.new
 
-price_list = File.new("/home/mint/current-magic", "r")
+price_list = File.new("./cards.csv", "r")
 
 while (line = price_list.gets)
 	cardlist[line.split(",")[0]] = line.split(",")[1].to_f
