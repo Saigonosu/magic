@@ -1,25 +1,37 @@
-# class Card
-#   attr_accessor :name, :price
-#   def initialize(name, price)
-#     @name, @price = name, price
-#   end
-# end
-#
-# is equivalent to...
-Card = Struct.new(:name, :price)
+module Magic
+  @@cards = {}
 
+  def self.cards
+    @@cards
+  end
 
-cardlist = Hash.new
+  def @@cards.<<(card)
+    @@cards[card.name] = card
+  end
 
-price_list = File.new("./cards.csv", "r")
+  # class Card
+  #   attr_accessor :name, :price
+  #   def initialize(name, price)
+  #     @name, @price = name, price
+  #   end
+  # end
+  #
+  # is equivalent to...
+  Card = Struct.new(:name, :price) do
+    def self.create_from_line_of_csv(csv_line)
+      name, price = csv_line.split(",")
+      price = price.to_f
 
-while (line = price_list.gets)
-  name, price = line.split(",")
-  price = price.to_f
+      card = self.new name, price
 
-  card = Card.new name, price
+      Magic.cards << card
+    end
+  end
+end
 
-	cardlist[card.name] = card
+# generate all Magic::Card
+File.new("./cards.csv", "r").each do |line|
+  Magic::Card.create_from_line_of_csv(line)
 end
 
 total_price = 0.0
@@ -29,11 +41,10 @@ file_path = gets.chomp
 File.new(file_path, "r").each do |line|
   card_name = line.chomp
 
-	puts card_name
-	puts cardlist[card_name]
-
-  card  = cardlist[card_name]
+  card  = Magic.cards[card_name]
   price = card.price
+
+	puts card_name, card
 
 	total_price += price
 end
