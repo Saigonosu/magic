@@ -44,7 +44,7 @@ File.new(file_path, "r").each do |line|
   card  = Magic.cards[card_name]
   price = card.price
 
-	puts card_name, card
+	puts card.name, card.price
 
 	total_price += price
 end
