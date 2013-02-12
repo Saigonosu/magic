@@ -39,23 +39,34 @@ module Magic
 
 	FullCard = Struct.new(:name, :set, :rarity, :cost, :pt, :type, :text, :flavor) do
 	def self.create_from_line_of_csv(full_list)
-     name, set, rarity, cost, pt, type, text, flavor = full_list.split(",")
+     name, set, rarity, cost, pt, type, text, flavor = full_list.split("\t")
      card = self.new name, set, rarity, cost, pt, type, text, flavor
      Magic.fullcard << card
     end
+	
+	def self.card_search
+    puts "Card name?"
+    card_name = gets.chomp
+	puts Magic.fullcard[card_name]
+	end
 end
 end
+
+#---------------------------------------------------------------------
+
 # generate all Magic::Card
 File.new("./cards.csv", "r").each do |line|
   Magic::Card.create_from_line_of_csv(line)
 end
-puts Magic.cards
+
 # generate all full Magic::FullCard
 File.new("./Master.csv", "r").each do |line|
   Magic::FullCard.create_from_line_of_csv(line)
 end
-puts Magic.fullcard
+
 total_price = 0.0
+
+Magic::FullCard.card_search
 
 puts "Enter the name of the list you would like to tally"
 file_path = gets.chomp
