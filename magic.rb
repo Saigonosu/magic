@@ -40,8 +40,8 @@ File.new("./cards.csv", "r").each do |line|
   Magic::Card.create_from_line_of_csv(line)
 end
 
-def prompt_user_to_enter_card_name
-  print "Card not found, please enter card name: "
+def prompt_user_to_reenter_card_name_for_card(str)
+  print "Card \"#{str}\" not found, please enter card name: "
   gets.chomp
 end
 
@@ -74,7 +74,7 @@ File.new(file_path, "r").each do |line|
   cards = Magic::Card.where_name_matches(card_name)
 
   while cards.empty?
-    card_name = prompt_user_to_enter_card_name
+    card_name = prompt_user_to_reenter_card_name_for_card(card_name)
     cards = Magic::Card.where_name_matches(card_name)
   end
 
