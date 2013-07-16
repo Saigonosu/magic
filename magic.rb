@@ -1,3 +1,5 @@
+require 'pry'
+
 module Magic
   @@cards = {}
 
@@ -26,6 +28,10 @@ module Magic
 
       Magic.cards << card
     end
+    
+    def self.where_name_matches(str)
+      cards = Magic.cards.select {|card_name, card| card_name.match(/^#{str}/)}
+    end
   end
 end
 
@@ -34,14 +40,50 @@ File.new("./cards.csv", "r").each do |line|
   Magic::Card.create_from_line_of_csv(line)
 end
 
+def prompt_user_to_enter_card_name
+  print "Card not found, please enter card name: "
+  gets.chomp
+end
+
+def prompt_user_to_select_card_from_cards(cards)
+  puts "Please select a card from the list"
+  num, cards_arr = 1, []
+  cards.each do |card_name, card|
+    cards_arr << card
+
+    puts "#{"%2s" % num}: #{card_name}"
+
+    num += 1
+  end
+
+  num = gets.to_i - 1
+
+  card = if 1 <= num && num <= cards.size
+    cards_arr[num]
+  else
+    prompt_user_to_select_card_from_cards(cards)
+  end
+end
+
 total_price = 0.0
 
 puts "Enter the name of the list you would like to tally"
 file_path = gets.chomp
 File.new(file_path, "r").each do |line|
   card_name = line.chomp
+  cards = Magic::Card.where_name_matches(card_name)
 
-  card  = Magic.cards[card_name]
+  while cards.empty?
+    card_name = prompt_user_to_enter_card_name
+    cards = Magic::Card.where_name_matches(card_name)
+  end
+
+  if cards.size == 1
+    card = cards.values.first
+  else
+    card = prompt_user_to_select_card_from_cards(cards)
+  end
+
   price = card.price
 
 	puts card.name, card.price
